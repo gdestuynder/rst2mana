@@ -24,7 +24,8 @@ except ImportError:
 	print("Missing required module: %s" % (e))
 
 class ConfluenceRPC:
-	def __init__(self, user, passwd, space, label, homepage, url):
+	def __init__(self, user, passwd, space, label, homepage, url, debug=False):
+		self.isdebug = debug
 		self.server = xmlrpclib.ServerProxy(url)
 		self.connection = self.server.confluence2
 		self.token = self.connection.login(user, passwd)
@@ -141,7 +142,7 @@ class ConfluenceRPC:
 		self.debug("Logged out.")
 
 	def debug(self, buf):
-		if DEBUG:
+		if self.isdebug:
 			print("++ %s" % buf)
 
 	def fatal(self, buf):
@@ -188,7 +189,7 @@ def main(argv):
 	except OSError:
 		fatal("Directory not found %s", DOCS_PATH)
 
-	c = ConfluenceRPC(USER, PASS, SPACE, LABEL, HOMEPAGE, URL)
+	c = ConfluenceRPC(USER, PASS, SPACE, LABEL, HOMEPAGE, URL, DEBUG)
 
 	pages_updated = []
 
