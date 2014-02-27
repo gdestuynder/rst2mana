@@ -28,3 +28,12 @@ Requirements
 
 * Python with xmlrpclib, docutils and pygments libraries.
 * Confluence wiki - with XMLRPC enabled.
+
+Configuration
+-------------
+
+* cp config.py.inc config.py
+* edit config.py to your liking
+* populate ./docs/ or the path you have setup with rst documents
+* ./rst2mana
+* profit!
