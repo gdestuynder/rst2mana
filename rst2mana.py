@@ -102,7 +102,7 @@ class ConfluenceRPC:
 		return False
 
 	def rst2html(self, data):
-		defaults={'file_insertion_enabled': 0,
+		defaults={'file_insertion_enabled': 1,
 					'raw_enabled': 0,
 					'halt_level': 2,
 				}
