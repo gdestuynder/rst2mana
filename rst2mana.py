@@ -102,12 +102,16 @@ class ConfluenceRPC:
 		return False
 
 	def rst2html(self, data):
-		defaults={'file_insertion_enabled': 1,
+		defaults={'file_insertion_enabled': 0,
 					'raw_enabled': 0,
 					'halt_level': 2,
+					'embed-stylesheet': 1,
+					'toc-entry-backlinks': 0,
+					'stylesheet_path': 'style.css',
 				}
 		try:
-			return publish_parts(data, writer_name='html', settings_overrides=defaults)['html_body']
+			parts = publish_parts(data, writer_name='html', settings_overrides=defaults)
+			return parts['stylesheet']+parts['html_body']
 		except docutils.utils.SystemMessage:
 			fatal("Parsing ReStructuredText failed, invalid syntax.")
 
