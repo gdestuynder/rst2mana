@@ -9,6 +9,8 @@
 #
 # Confluence API:
 # https://developer.atlassian.com/display/CONFDEV/Remote+Confluence+Methods
+# RST doc:
+# http://docutils.sourceforge.net/docs/user/rst/cheatsheet.txt
 
 import os
 import sys
@@ -44,6 +46,17 @@ class ConfluenceRPC:
 		if (self.connection.getSpaceStatus(self.token, self.space) != "CURRENT"):
 			fatal("Space %s isn't current" % self.space)
 
+	def custom_filters(self, data):
+# Custom filters to the RST document data
+# Make sure to respect the number of characters in case this is in a table
+		revision_marker='$Revision:        $'
+		rev=''
+# Might use git describe --long --dirty --abbrev=10 --tags later
+# Short rev:
+		with open('.git/refs/heads/master', 'r') as f:
+			rev = f.read(7)
+		return data.replace(revision_marker, ' Revision: '+rev+' ')
+
 	def createPage(self, rootdir, filename):
 		pagename = filename[:-4]
 # Fixup rootdir to look like a page name so that we can retrieve it from Confluence.
@@ -61,7 +74,7 @@ class ConfluenceRPC:
 
 		self.debug("Attempting to create page: %s (from  %s)" % (pagename, os.path.join(rootdir, filename)))
 		with open(os.path.join(rootdir, filename)) as p:
-			html = self.rst2html(p.read())
+			html = self.rst2html(self.custom_filters(p.read()))
 		content = self.getMacroHTML(html)
 		self.storePage(pagename, content, parentid=parentpage['id'])
 
@@ -103,7 +116,7 @@ class ConfluenceRPC:
 
 	def rst2html(self, data):
 		defaults={'file_insertion_enabled': 0,
-					'raw_enabled': 0,
+					'raw_enabled': 1,
 					'halt_level': 2,
 					'embed-stylesheet': 1,
 					'toc-entry-backlinks': 0,
